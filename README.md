@@ -10,7 +10,7 @@ Simple application to demonstrate connecting with PointClickCare.
 
 ### Installing
 
-- git clone ....
+- git clone https://bitbucket.org/omamori/omamori.git
 - update server/config/credentials.js with your clientId and clientSecret
 - update web/src/components/Landing.js with your clientId
 
