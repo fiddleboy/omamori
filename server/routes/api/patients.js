@@ -14,7 +14,7 @@ router.get("/test", (req, res) => {
 router.get("/", (req, res) => {
   console.log("******************************************");
   console.log("********** Inside GET api/patients *******");
-  let url = keys.resourceURL + global.orgId + "/patients";
+  let url = keys.resourceURL + global.orgId + "/patients?patientStatus=Current";
   console.log("Getting patients using ", url);
   let config = {
     headers: {
@@ -87,7 +87,7 @@ function callGetCalendar(patientId) {
     },
     params: {
       patientId: patientId,
-      fromDateTime: "2019-05-01T00:00:00.000Z"
+      fromDateTime: "2019-05-12T00:00:00.000Z"
     }
   };
   return new Promise((approve, reject) => {
