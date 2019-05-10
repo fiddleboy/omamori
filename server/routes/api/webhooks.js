@@ -43,13 +43,14 @@ router.post("/", (req, res) => {
     .post(url, body, config)
     .then(response => {
       console.log(`Response for POST /calendar-events ${response.data}`);
-      res.send(200);
     })
     .catch(error => {
       console.log("****** Error ****** in GET api/webhooks");
       console.log(error);
       res.send(error);
     });
+  console.log("Sending Success Response to acknowledge the webhook");
+  res.send(200);
 });
 
 function getDate() {

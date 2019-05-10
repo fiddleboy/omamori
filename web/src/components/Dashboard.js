@@ -143,23 +143,8 @@ class Dashboard extends React.Component {
         <CssBaseline />
         <AppBar position="static">
           <Toolbar>
-            <IconButton
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="Menu"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" color="inherit" className={classes.grow}>
-              Dashboard
-            </Typography>
-            <Typography
-              variant="h6"
-              color="inherit"
-              className={classes.username}
-              noWrap
-            >
-              Welcome {this.state.user}
+            <Typography variant="h4" color="inherit" className={classes.grow}>
+              Welcome [{this.state.user}]
             </Typography>
             <Button
               className={classes.logoutButton}
@@ -377,7 +362,7 @@ const styles = {
   },
   grow: {
     flexGrow: 1,
-    fontSize: "3em"
+    fontSize: "2em"
   },
   username: {
     fontSize: "3em"
@@ -387,7 +372,7 @@ const styles = {
     marginRight: 20
   },
   logoutButton: {
-    fontSize: "1.5em",
+    fontSize: "1em",
     marginLeft: 20,
     backgroundColor: "white",
     "&:hover": {
