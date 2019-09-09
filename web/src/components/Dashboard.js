@@ -9,7 +9,6 @@ import { withStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import axios from "axios";
-import MenuIcon from "@material-ui/icons/Menu";
 
 //Icons
 import Icon from "@mdi/react";
