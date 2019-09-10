@@ -42,11 +42,32 @@ If the backend is registered as a webhook target, it will receive webhooks notif
 
 This demo app uses a few different apis in order to show all this data, in chronological order of the above scenario
 
-- **POST access token**. This call will return an access token to be used in subsequent calls. E.g. *POST https://connect.pointclickcare.com/auth/token*
-- **GET UserInfo**. This api infers the user identity from the access token and returns details about the logged-in user. This is used to display the name in the banner. E.g. *GET https://connect.pointclickcare.com/auth/token*
-- **GET Faclilities**, will return a list of available facilities to the logged in user. E.g. *GET  https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/facs*
-- **GET Patients**. Once a facility is selected, returns the list of patients for that facility. E.g. *GET https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/patients?patientStatus=Current*
-- **GET Patient**. This returns more details about a single patient. E.g. *GET https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/patients/279509*
-- **GET CalendarOccurences**. This api returns calendar event occurences for a given patient. E.g. *GET https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/calendar-occurrences*
-- **POST CalendarEvent**. Creates a new calendar event for a patient, in our case a Doctor Appointment. E.g. *POST https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/calendar-events*
-- **POST revoke access token**. When logging out, invalidate the access token. E.g. *POST https://connect.pointclickcare.com/auth/revoke*
+**POST access token**. This call will return an access token to be used in subsequent calls.
+- E.g. *POST https://connect.pointclickcare.com/auth/token*
+
+**GET UserInfo**. This api infers the user identity from the access token and returns details about the logged-in user. This is used to display the name in the banner.
+- E.g. *GET https://connect.pointclickcare.com/auth/token*
+- Documentation: https://developer.pointclickcare.com/apireference/getUserInfoOpDef.html
+
+**GET Faclilities**, will return a list of facilities available to the logged in user. 
+- E.g. *GET  https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/facs*
+- Documentation: https://developer.pointclickcare.com/apireference/getFacilityListOpDef.html
+
+**GET Patients**. Once a facility is selected, returns the list of patients for that facility.
+- E.g. *GET https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/patients?patientStatus=Current*
+- Documentation: https://developer.pointclickcare.com/apireference/getPatientListPublicOpDef.html
+
+**GET Patient**. This returns more details about a single patient. 
+- E.g. *GET https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/patients/279509*
+- Documentation: https://developer.pointclickcare.com/apireference/getPatientByIdOpDef.html
+
+**GET CalendarOccurences**. This api returns calendar event occurences for a given patient.
+- E.g. *GET https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/calendar-occurrences*
+- Documentation: https://developer.pointclickcare.com/apireference/getCalendarOccurrenceListOpDef.html
+
+**POST CalendarEvent**. Creates a new calendar event for a patient, in our case a Doctor Appointment.
+- E.g. *POST https://connect.pointclickcare.com/api/public/preview1/orgs/1504955269/calendar-events*
+- Documentation: https://developer.pointclickcare.com/apireference/postCalendarEventOpDef.html
+
+**POST revoke access token**. When logging out, invalidate the access token.
+- E.g. *POST https://connect.pointclickcare.com/auth/revoke*
