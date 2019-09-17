@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, createStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import axios from "axios";
@@ -37,163 +37,156 @@ const override = css`
   margin-top: 5em;
 `;
 
-class Dashboard extends React.Component {
-  state = {
-    selectedFacility: "",
-    facilities: [],
-    patients: [],
-    selectedPatient: 0,
-    page: 0,
-    rowsPerPage: 5,
-    patientDetails: undefined,
-    user: ""
-  };
+interface Facility {
+  facId: string,
+  facilityName: string,
+}
+
+interface Patient {
+  patientId: string,
+  firstName: string,
+  lastName: string,
+  birthDate: string,
+  gender: string,
+  admissionDate: string,
+}
+
+function Dashboard(props: any) {
+  const [selectedFacility, setSelectedFacility] = useState(0);
+  const [facilities, setFacilities]: [Array<Facility>, Dispatch<SetStateAction<Array<never>>>] = useState([]);
+  const [patients, setPatients]: [Array<Patient>, Dispatch<SetStateAction<Array<never>>>] = useState([]);
+  const [selectedPatient, setSelectedPatient] = useState(0);
+  const [currentPage, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [patientDetails, setPatientDetails]: [any, any] = useState(undefined);
+  const [user, setUser] = useState("");
 
   //FETCH FACILITIES ON PAGE LOAD
-  componentDidMount() {
-    axios
-      .get("/api/facilities")
-      .then(res => {
-        this.setState({
-          facilities: res.data.data
-        });
-      })
-      .catch(err =>
-        this.setState({
-          facilities: [],
-          patients: []
-        })
-      );
-    axios
-      .get("/api/userInfo")
-      .then(res => {
-        this.setState({
-          user: res.data.username
-        });
-      })
-      .catch(err =>
-        this.setState({
-          user: ""
-        })
-      );
-  }
+  useEffect(() => {
+    async function get() {
+      try {
+      const res = await axios.get("/api/facilities");
+      if (res.data.data)
+      {
+        setFacilities(res.data.data);
+      }
+      }
+      catch(e) {
+        setFacilities([]);
+        setPatients([]);
+      }
+      try {
+        const res = await axios.get("/api/userInfo");
+        setUser(res.data.username);
+      }
+      catch(e) {
+        setUser("");
+      }
+    }
+    get();
+  }, []);
 
   //FETCH PATIENTS
-  handleFacilityChange = event => {
-    this.setState({ patients: [] });
-    axios
-      .get(`/api/patients?facId=${event.target.value}`)
-      .then(res => {
-        this.setState({
-          patients: res.data.data
-        });
-      })
-      .catch(err =>
-        this.setState({
-          patients: []
-        })
-      );
-    this.setState({ selectedFacility: event.target.value });
-  };
+  async function handleFacilityChange(event: any) {
+    setPatients([]);
+    try {
+      const res = await axios.get(`/api/patients?facId=${event.target.value}`);
+      setPatients(res.data.data);
+    }
+    catch(e) {
+      setPatients([]);
+    }
+    setSelectedFacility(event.target.value);
+  }
 
   //LOGOUT
-  handleLogout = event => {
-    axios.get("/api/logout").then(res => {
+  async function handleLogout(props: any) {
+    try {
+      await axios.get("/api/logout");
       //Logout successful, redirect to Landing page
-      this.props.history.push("/");
-    });
-  };
+      props.history.push("/");
+    }
+    catch(e) {
+      console.log(e);
+    }
+  }
 
   //TABLE BUTTON
-  handlePatientDetailsClick = (event, patientId) => {
-    axios
-      .get(`/api/patients/${patientId}`)
-      .then(res => {
-        this.setState({
-          patientDetails: res.data
-        });
-      })
-      .catch(err =>
-        this.setState({
-          patientDetails: {}
-        })
-      );
-    this.setState({ selectedPatient: patientId });
+  async function handlePatientDetailsClick(patientId: any) {
+    try {
+      const res = await axios.get(`/api/patients/${patientId}`);
+      setPatientDetails(res.data)
+    }
+    catch(e) {
+      setPatientDetails({})
+    }
+    setSelectedPatient(patientId);
   };
 
   //BACK TO TABLE BUTTON
-  backToTableClick = (event, patientId) => {
-    this.setState({ selectedPatient: 0 });
-    this.setState({ patientDetails: undefined });
-  };
+  function backToTableClick() {
+    setSelectedPatient(0);
+    setPatientDetails(undefined);
+  }
 
-  //TABLE PAGINATION
-  handleChangePage = (event, page) => {
-    this.setState({ page });
-  };
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
-  };
-
-  render() {
-    const { classes } = this.props;
-    return (
-      <React.Fragment>
-        <CssBaseline />
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h4" color="inherit" className={classes.grow}>
-              Welcome [{this.state.user}]
+  const { classes } = props;
+  return (
+    <React.Fragment>
+      <CssBaseline />
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h4" color="inherit" className={classes.grow}>
+            Welcome [{user}]
             </Typography>
-            <Button
-              className={classes.logoutButton}
-              variant="outlined"
-              onClick={this.handleLogout}
-            >
-              Logout
+          <Button
+            className={classes.logoutButton}
+            variant="outlined"
+            onClick={event => handleLogout(props)}
+          >
+            Logout
             </Button>
-          </Toolbar>
-        </AppBar>
+        </Toolbar>
+      </AppBar>
 
-        <main className={classes.layout}>
-          <div>
-            <Typography
-              component="h2"
-              variant="h2"
-              align="left"
-              color="textPrimary"
-              gutterBottom
+      <main className={classes.layout}>
+        <div>
+          <Typography
+            component="h2"
+            variant="h2"
+            align="left"
+            color="textPrimary"
+            gutterBottom
+          >
+            {/* FACILITIES SELECT */}
+            <Select
+              className={classes.facilitySelect}
+              value={selectedFacility}
+              onChange={handleFacilityChange}
             >
-              {/* FACILITIES SELECT */}
-              <Select
-                className={classes.facilitySelect}
-                value={this.state.selectedFacility}
-                onChange={this.handleFacilityChange}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                {this.state.facilities.map((e, keyIndex) => {
-                  return (
-                    <MenuItem key={keyIndex} value={e.facId}>
-                      {e.facilityName}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </Typography>
-            <Typography
-              variant="h6"
-              align="center"
-              color="textSecondary"
-              component="div"
-            >
-              {//Show either the patient table or the patient details if a patient was selected.
-              this.state.selectedPatient > 0 ? (
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {facilities.map((fac, keyIndex) => {
+                return (
+                  <MenuItem key={keyIndex} value={fac.facId}>
+                    {fac.facilityName}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </Typography>
+          <Typography
+            variant="h6"
+            align="center"
+            color="textSecondary"
+            component="div"
+          >
+            {//Show either the patient table or the patient details if a patient was selected.
+              selectedPatient > 0 ? (
                 //PATIENT IS SELECTED
                 <div>
                   <Tooltip title="Back to Patient table" placement="right">
-                    <IconButton onClick={event => this.backToTableClick(event)}>
+                    <IconButton onClick={backToTableClick}>
                       <Icon
                         path={mdiArrowLeftBoldCircle}
                         size={3}
@@ -202,13 +195,13 @@ class Dashboard extends React.Component {
                     </IconButton>
                   </Tooltip>
                   <ClientProfile
-                    client={this.state.patientDetails}
+                    client={patientDetails}
                     classes={classes}
                   />
                 </div>
-              ) : this.state.selectedFacility > 0 ? (
+              ) : selectedFacility !== 0 ? (
                 //DO WE HAVE THE PATIENTS YET?
-                this.state.patients.length > 0 ? (
+                patients.length > 0 ? (
                   //PATIENT TABLE
                   <Paper className={classes.root}>
                     <div className={classes.tableWrapper}>
@@ -243,12 +236,12 @@ class Dashboard extends React.Component {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {this.state.patients
+                          {patients
                             //Pagination operations
                             .slice(
-                              this.state.page * this.state.rowsPerPage,
-                              this.state.page * this.state.rowsPerPage +
-                                this.state.rowsPerPage
+                              currentPage * rowsPerPage,
+                              currentPage * rowsPerPage +
+                              rowsPerPage
                             )
                             //Iteration
                             .map(patient => (
@@ -257,12 +250,10 @@ class Dashboard extends React.Component {
                                   <Tooltip
                                     title="Patient Details"
                                     placement="top"
-                                    size="2"
                                   >
                                     <IconButton
                                       onClick={event =>
-                                        this.handlePatientDetailsClick(
-                                          event,
+                                        handlePatientDetailsClick(
                                           patient.patientId
                                         )
                                       }
@@ -309,48 +300,47 @@ class Dashboard extends React.Component {
                     <TablePagination
                       rowsPerPageOptions={[5, 10]}
                       component="div"
-                      count={this.state.patients.length}
-                      rowsPerPage={this.state.rowsPerPage}
-                      page={this.state.page}
+                      count={patients.length}
+                      rowsPerPage={rowsPerPage}
+                      page={currentPage}
                       backIconButtonProps={{
                         "aria-label": "Previous Page"
                       }}
                       nextIconButtonProps={{
                         "aria-label": "Next Page"
                       }}
-                      onChangePage={this.handleChangePage}
-                      onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                      onChangePage={(event, page) => setPage(page)}
+                      onChangeRowsPerPage={event => setRowsPerPage(+(event.target.value))}
                     />
                   </Paper>
                 ) : (
-                  //NO PATIENTS YET, SHOW LOADING SPINNER
-                  <div className="sweet-loading">
-                    <CircleLoader
-                      css={override}
-                      sizeUnit={"px"}
-                      size={300}
-                      color={"#3f51b5"}
-                      loading={true}
-                    />
-                  </div>
-                )
+                    //NO PATIENTS YET, SHOW LOADING SPINNER
+                    <div className="sweet-loading">
+                      <CircleLoader
+                        css={override}
+                        sizeUnit={"px"}
+                        size={300}
+                        color={"#3f51b5"}
+                        loading={true}
+                      />
+                    </div>
+                  )
               ) : (
-                //NO FACILITY SELECTED AT ALL
-                <div align="left">Please select a facility</div>
-              )}
-            </Typography>
-          </div>
-        </main>
-      </React.Fragment>
-    );
-  }
+                    //NO FACILITY SELECTED AT ALL
+                    <div>Please select a facility</div>
+                  )}
+          </Typography>
+        </div>
+      </main>
+    </React.Fragment>
+  );
 }
 
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const styles = {
+const styles = createStyles({
   "@global": {
     body: {
       backgroundColor: "#cbcbcb"
@@ -410,6 +400,6 @@ const styles = {
   eventList: {
     fontSize: "120%"
   }
-};
+});
 
 export default withStyles(styles)(Dashboard);

@@ -27,7 +27,7 @@ const dateOptions = {
   timeZoneName: "short"
 };
 
-function sortEvents(a, b) {
+function sortEvents(a: any, b: any) {
   let aTime = a.startDateTime.toLowerCase();
   let bTime = b.startDateTime.toLowerCase();
 
@@ -40,9 +40,8 @@ function sortEvents(a, b) {
   }
 }
 
-export function ClientProfile(props) {
-  const { client } = props;
-  const { classes } = props;
+export function ClientProfile(props: any) {
+  const { client, classes } = props;
   if (client) {
     return (
       <Paper className={classes.detailsCard}>
@@ -57,16 +56,16 @@ export function ClientProfile(props) {
             </p>
           </div>
 
-          {client.events.length === 0 ? (
+          {client.events === undefined || props.client.events.length === 0 ? (
             <div>
               <h4>No upcoming events</h4>
             </div>
           ) : (
             <div>
               <h4>Upcoming events:</h4>
-              <List dense="true">
-                {client.events.sort(sortEvents).map((event, i) => (
-                  <ListItem>
+              <List dense={true}>
+                {props.client.events.sort(sortEvents).map((event: any) => (
+                  <ListItem key={event.calendarEventId}>
                     <ListItemIcon>
                       <CalendarIcon />
                     </ListItemIcon>

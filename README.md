@@ -25,6 +25,7 @@ The frontend will be running on localhost:3000
 
     cd server
     npm install
+    npm install -g typescript
     npm start
 
 The backend will be running on localhost:3443
