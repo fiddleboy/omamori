@@ -1,7 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const axios = require("axios");
-const keys = require("../../config/credential");
+import { Router } from "express";
+import axios from "axios";
+import { resourceURL } from "../../config/credential";
+
+const router = Router();
 
 router.get("/test", (req, res) => {
   res.json({ msg: "Webhooks Works" });
@@ -10,14 +11,14 @@ router.get("/test", (req, res) => {
 // @route   POST api/webhooks
 // @desc    POST Webhooks
 // @access  Public
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   console.log("**********************************************");
   console.log("********** Inside POST api/webhooks **********");
-  data = req.body;
+  const data = req.body;
   console.log(
     "Patient with id " + data.patientId + " triggered " + data.eventType
   );
-  let url = keys.resourceURL + global.orgId + "/calendar-events";
+  let url = resourceURL + global.orgId + "/calendar-events";
   console.log("Creating Calendar Event. ", url);
   let config = {
     headers: {
@@ -39,16 +40,14 @@ router.post("/", (req, res) => {
     endDateTime: new Date(endDateTime).toISOString(),
     rrule: "FREQ=DAILY;INTERVAL=1;COUNT=1"
   };
-  axios
-    .post(url, body, config)
-    .then(response => {
-      console.log(`Response for POST /calendar-events ${response.data}`);
-    })
-    .catch(error => {
-      console.log("****** Error ****** in GET api/webhooks");
-      console.log(error);
-      res.send(error);
-    });
+  try {
+    const response = await axios.post(url, body, config);
+    console.log(`Response for POST /calendar-events ${response.data}`);
+  } catch (error) {
+    console.log("****** Error ****** in GET api/webhooks");
+    console.log(error);
+    res.send(error);
+  }
   console.log("Sending Success Response to acknowledge the webhook");
   res.send(200);
 });
@@ -59,4 +58,4 @@ function getDate() {
   return currentDate;
 }
 
-module.exports = router;
+export default router;

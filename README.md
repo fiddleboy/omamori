@@ -10,23 +10,28 @@ Simple application to demonstrate connecting with PointClickCare.
 
 ### Installing
 
-- git clone https://omamori@bitbucket.org/omamori/omamori.git
+- git clone git@github.com:njaremko/omamori.git
 - update server/config/credentials.js with your clientId and clientSecret
 - update web/src/components/Landing.js with your clientId on line 15
 
 ### Executing program as a developer
+
+Before proceeding, you should install typescript:
+
+`npm install -g typescript`
+
 Run the frontend (/web) and the backend (/server) in two different consoles
-
-    cd web
-    npm install
-    npm start
-
+```sh
+cd web
+npm install
+npm start
+```
 The frontend will be running on localhost:3000
-
-    cd server
-    npm install
-    npm start
-
+```sh
+cd server
+npm install
+npm start
+```
 The backend will be running on localhost:3443
 
 Click on the Login button, you will be redirected to the partner login page. 
